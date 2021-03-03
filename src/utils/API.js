@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const url = "https://k4hback.herokuapp.com/";
+const url = "https://k4hback.herokuapp.com";
 
 export default {
     

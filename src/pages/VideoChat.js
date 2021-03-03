@@ -9,9 +9,8 @@ export default function VideoChat() {
 
     const myPeer = new Peer(undefined, {
         path: '/peerjs',
-        host: '/',
-        port: '443',
-        path: "/"
+        host: 'https://k4hback.herokuapp.com',
+        port: '443'
     });
 
     const socket = io();

@@ -1,7 +1,6 @@
 import axios from "axios";
 
-// const url = "http://localhost:3001";
-const url = "https://k4hback.herokuapp.com";
+const url = "http://localhost:3001";
 
 export default {
     createThread: (otherUser, token) => {

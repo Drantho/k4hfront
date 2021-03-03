@@ -1,7 +1,6 @@
 import axios from "axios";
 
-// const url = "http://localhost:3001";
-const url = "https://k4hback.herokuapp.com";
+const url = "http://localhost:3001";
 
 export default {
     
@@ -97,6 +96,10 @@ export default {
           authorization: `Bearer: ${token}`
       }
     })  
+  },
+  getServicesByTag: id =>{
+    console.log((`${url}/api/service?tag=${id}`));
+    return axios.get(`${url}/api/service?tag=${id}`)
   },
   getServicesByUser: id =>{
     console.log((`${url}/api/service?user=${id}`));
@@ -201,5 +204,26 @@ export default {
           authorization: `Bearer: ${token}`
       }
     })
+  },
+  getAnswerComments: (ref, token) => {
+    return axios.get(`${url}/api/comment?answer=${ref}`, {
+      headers: {
+        authorization: `Bearer: ${token}`
+      }
+    });
+  },
+  createAnswerComment: (data, token) => {
+    return axios.post(`${url}/api/comment`, data, {
+      headers: {
+        authorization: `Bearer: ${token}`
+      }
+    });
+  },
+  updateUserBio: (newBio, token) => {
+    return axios.put(`${url}/api/user`, {bio: newBio}, {
+      headers: {
+        authorization: `Bearer: ${token}`
+      }
+    });
   }
 };

@@ -20,7 +20,6 @@ import UserNavbar from './components/UserNavbar/index';
 import LoginNavbar from './components/LoginNavbar'
 import API from "./utils/API";
 import ProtectedRoute from "./components/ProtectedRoute";
-import VideoChat from './pages/VideoChat';
 
 function App() {
 
@@ -40,7 +39,7 @@ function App() {
     email: "",
     isSignedIn: false,
     token: "",
-    portrait: "mziei8xfs9okenktbabp"
+    portrait: "qi6o2g0haw3vfcjetmmn"
   });
 
   const handleInputChanged = event => {
@@ -57,6 +56,7 @@ function App() {
         firstName: response.data.user.firstName,
         lastName: response.data.user.lastName,
         email: response.data.user.email,
+        bio: response.data.user.bio,
         isSignedIn: true,
         token: response.data.token,
         portrait: response.data.user.portrait        
@@ -81,6 +81,7 @@ function App() {
         firstName: response.data.user.firstName,
         lastName: response.data.user.lastName,
         email: response.data.user.email,
+        bio: response.data.user.bio,
         portrait: localStorage.getItem("portrait") || response.data.user.portrait,
         isSignedIn: true,
         token: response.data.token
@@ -105,11 +106,11 @@ function App() {
           firstName: response.data.user.firstName,
           lastName: response.data.user.lastName,
           email: response.data.user.email,
+          bio: response.data.user.bio,
           portrait: localStorage.getItem("portrait") || response.data.user.portrait,
           isSignedIn: true,
           token: response.data.token
         });
-        console.log(userState.id);
       }).catch(err => {
         console.log(err);
         localStorage.clear("token")
@@ -118,9 +119,26 @@ function App() {
     }
   }, [])
 
+  const globalGrommetTheme = {
+    global: {
+      focus: {
+        border: {
+          color :'rgba(0,0,0,0)'
+        }
+      },
+      button: {
+        active: {
+          background: {
+            color: '#FCE181'
+          }
+        }
+      }
+    }
+  }
+
   return (
     <Router>
-      <Grommet theme={{global:{focus:{border:{color: 'rgba(0,0,0,0)'}}}}}>
+      <Grommet theme={globalGrommetTheme}>
       <UserNavbar userState={userState}/>
       {/* <LoginNavbar/> */}
       <Switch>
@@ -139,7 +157,7 @@ function App() {
           <Profile userState={userState} setUserState={setUserState}/>
         </ProtectedRoute>
         <Route exact path="/tag/:id">
-          <Tag />
+          <Tag userState={userState}/>
         </Route>
         <Route exact path="/question/:id">
           <Question userState={userState}/>
@@ -178,9 +196,6 @@ function App() {
         <ProtectedRoute exact path="/messages" isSignedIn={userState.isSignedIn}>
           <MessageView userState={userState} />
         </ProtectedRoute>
-        <Route exact path="/videochat/:room">
-            <VideoChat/>
-        </Route>
         <Route path="*">
           <NotFound />
         </Route>

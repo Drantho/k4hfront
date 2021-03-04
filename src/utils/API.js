@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const url = "https://k4hback.herokuapp.com";
+const url = "https://knowledge4hire.herokuapp.com";
 
 export default {
     
@@ -131,6 +131,15 @@ export default {
     console.log((`${url}/api/comment?service=${id}`));
     return axios.get(`${url}/api/comment?service=${id}`)
   },
+  createServiceCommet: (data, token) => {
+    console.log((`${url}/api/comment`));
+    console.log(`data at API`, data);
+    return axios.post(`${url}/api/comment`, data, {
+      headers:{
+          authorization: `Bearer: ${token}`
+      }
+    })
+  },
   getAllQuestionComments: id => {
     console.log((`${url}/api/comment?question=${id}`));
     return axios.get(`${url}/api/comment?question=${id}`)
@@ -164,6 +173,15 @@ export default {
   getUserById: id => {
     console.log((`${url}/api/user?id=${id}`));
     return axios.get(`${url}/api/user?id=${id}`)
+  },
+  updateUser: (data, token) => {
+    console.log((`${url}/api/user`));
+    console.log(data);
+    return axios.put(`${url}/api/user`, data, {
+      headers:{
+          authorization: `Bearer: ${token}`
+      }
+    })
   },
   signIn: data => {
     console.log((`${url}/api/user/signin`));

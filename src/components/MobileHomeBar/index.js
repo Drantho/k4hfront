@@ -1,10 +1,12 @@
 import React from 'react';
-import { Box, Grid, Text} from 'grommet';
+import { Box, Text, Grid } from 'grommet';
 
 
-export default function AddQuestion() {
+
+export default function MobileHomeBar() {
 
     return (
+        <Box Box width="350px" gap="medium" style={{ position: "fixed", left:"50%", top: 20}} margin={{top:"10px", left:"-175px"}}>
         <Box
             justify="center"
             align="center"
@@ -12,22 +14,24 @@ export default function AddQuestion() {
             background="#222E42"
             round="5px"
             height="60px"
+            margin={{bottom:"20px"}}
         >
 
             <Grid
                 areas={[
-                    ['blank', 'question', 'blank1'],
+                    ['test','test','test'],
                 ]}
-                columns={['1/4', '2/4', '1/4']}
+                columns={['flex', 'flex', 'flex']}
                 rows={['45px']}
                 gap="15px"
                 responsive="true"
             >
-                <Box gridArea="question" width="500px">
-                    <Text size="30px" color="#FCE181">Add a Question!</Text>
+                <Box gridArea="test" >
+                    <Text>Test</Text>
                 </Box>
             </Grid>
         </Box>
+    </Box>
 
     )
 }

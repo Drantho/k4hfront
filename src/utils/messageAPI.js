@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const url = "https://k4hback.herokuapp.com";
+const url = "https://knowledge4hire.herokuapp.com";
 
 export default {
     createThread: (otherUser, token) => {

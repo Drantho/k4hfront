@@ -6,6 +6,8 @@ import { Box, Form, FormField, TextArea, Button, Heading, Grommet } from 'gromme
 
 export default function Ask(props) {
 
+    const history = useHistory();
+
     const [formValues, setFormValues] = useState({});
 
     const handleInput = (event) => {
@@ -25,6 +27,7 @@ export default function Ask(props) {
              user: props.userState.id
         }, props.userState.token).then( (response) => {
             console.log(response);
+            history.push("/");
         }).catch( (err) => {
             console.log(err);
         });

@@ -73,7 +73,7 @@ export default function Answer(props) {
                         <Rating setAnswers={props.setAnswers}
                             reference={props.answer.id} type='answer'
                             userState={props.userState} />
-                        <Text size='16px'>{props.answer.text}</Text>
+                        <Text size='16px'>{props.answer.text}<br/><Link to={`/users/${props.answer.User.id}`}>{props.answer.User.username}</Link></Text>
                     </Box>
                 }>
                 <Box width='85%' justify='center' alignSelf='center'>

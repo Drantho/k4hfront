@@ -16,7 +16,7 @@ import isSoftNewlineEvent from 'draft-js/lib/isSoftNewlineEvent';
 import { useHistory } from 'react-router';
 import NothingHereDisplay from './NothingHereDisplay';
 
-const ENDPOINT = 'localhost:3001';
+const ENDPOINT = 'https://k4hback.herokuapp.com';
 let socket = io(ENDPOINT);
 
 export default function ThreadView(props) {

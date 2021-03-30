@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const url = "https://k4hback.herokuapp.com";
+const url = "http://localhost:3001";
 
 export default {
     
@@ -19,6 +19,9 @@ export default {
   getQuestionsBySearch: search => {
     console.log(`${url}/api/question?search=${search}`);
     return axios.get(`${url}/api/question?search=${search}`);
+  },
+  getQuestionsByTags: tags => {
+    return axios.get(`${url}/api/question?tags=${tags}`);
   },
   getAllQuestions: () => {
     console.log(`${url}/api/question`);
@@ -62,6 +65,9 @@ export default {
     console.log(`${url}/api/tag?id=${id}`);
     return axios.get(`${url}/api/tag?id=${id}`);
   },
+  getTagbyName: name => {
+    return axios.get(`${url}/api/tag?name=${name}`);
+  },
   getTagBySearch: search => {
     console.log(`${url}/api/tag?search=${search}`);
     return axios.get(`${url}/api/tag?search=${search}`);
@@ -70,32 +76,26 @@ export default {
     console.log(`${url}/api/tag?user=${id}`);
     return axios.get(`${url}/api/tag?user=${id}`);
   },
-  getTagQuestionFeed: (data, token) => {
-    console.log((`${url}/api/question/uniqueQuestionsByTags`));
-    console.log(data);
-    return axios.post(`${url}/api/question/uniqueQuestionsByTags`, data, {
-      headers:{
-          authorization: `Bearer: ${token}`
-      }
-    })  
+  getTagQuestionFeed: (tags) => {
+    console.log((`${url}/api/question/feed`));
+    return axios.get(`${url}/api/question/feed?tags=${tags}`);
   },
-  getTagServiceFeed: (data, token) => {
-    console.log((`${url}/api/service/uniqueServicesByTags`));
-    console.log(data);
-    return axios.post(`${url}/api/service/uniqueServicesByTags`, data, {
-      headers:{
-          authorization: `Bearer: ${token}`
-      }
-    })  
+  getTagServiceFeed: (tags) => {
+    return axios.get(`${url}/api/service/feed?tags=${tags}`);
   },
   linkTagToUser: (tag, token) => {
     console.log((`${url}/api/tag/user`));
     console.log(tag);
-    return axios.put(`${url}/api/tag/user`, tag, {
+    return axios.put(`${url}/api/tag/user/${tag}`,{}, {
       headers:{
           authorization: `Bearer: ${token}`
       }
     })  
+  },
+  unLinkTagFromUser: (tag, token) => {
+    return axios.delete(`${url}/api/tag/user/${tag}`, {
+      headers: { authorization: `Bearer: ${token}` }
+    })
   },
   getServicesByTag: id =>{
     console.log((`${url}/api/service?tag=${id}`));
@@ -153,6 +153,9 @@ export default {
       }
     })
   },
+  getCommentsByUser: id => {
+    return axios.get(`${url}/api/comment?user=${id}`)
+  },
   getAnswersByUser: id => {
     console.log((`${url}/api/answer?user=${id}`));
     return axios.get(`${url}/api/answer?user=${id}`)
@@ -160,6 +163,9 @@ export default {
   getAnswersByQuestion: id => {
     console.log((`${url}/api/answer?question=${id}`));
     return axios.get(`${url}/api/answer?question=${id}`)
+  },
+  getAnswerById: id => {
+    return axios.get(`${url}/api/answer?id=${id}`)
   },
   createAnswer: (data, token) => {
     console.log((`${url}/api/answer`));
@@ -172,7 +178,7 @@ export default {
   },
   getUserById: id => {
     console.log((`${url}/api/user?id=${id}`));
-    return axios.get(`${url}/api/user?id=${id}`)
+    return axios.get(`${url}/api/user/?id=${id}`)
   },
   updateUser: (data, token) => {
     console.log((`${url}/api/user`));
@@ -214,6 +220,9 @@ export default {
     console.log((`${url}/api/rating?ref=${id}&type=${type}`));
     return axios.get(`${url}/api/rating?ref=${id}&type=${type}`)
   },
+  getRatingsByUser: (id) => {
+    return axios.get(`${url}/api/rating/all?user=${id}`)
+  },
   uploadPhoto: (data, token) => {
     console.log((`${url}/api/user/portrait`));
     console.log(data);
@@ -243,5 +252,11 @@ export default {
         authorization: `Bearer: ${token}`
       }
     });
+  },
+  getActivityFeed: ( userID ) => {
+    return axios.get(`${url}/api/user/feed?user=${userID}`);
+  },
+  getRelatedUsers: (tags, username) => {
+    return axios.get(`${url}/api/user/related?username=${username}&tags=${tags}`)
   }
 };

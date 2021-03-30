@@ -1,0 +1,51 @@
+.codeBlockStyle {
+    background-color: #fce181d7;
+    margin: 0;
+    padding: 10px;
+    font-size: 16px;
+    border-radius: 5px;
+}
+
+.hidePlaceholder .public-DraftEditorPlaceholder-root {
+  display: none;
+}
+
+div.DraftEditor-root {
+  box-shadow: inset 0 0 4px #222E42;
+  -webkit-box-shadow: inset 0 0 4px #222E42;
+  padding: 12px;
+  min-height: 120px;
+  border-radius: 5px;
+  background-color: #9dbacc;
+  font-size: 12pt;
+  line-height: 1em;
+}
+
+.post-editor div.DraftEditor-root {
+  z-index: -1;
+}
+
+.answer-display div.DraftEditor-root {
+  box-shadow: none;
+  -webkit-box-shadow: none;
+  background-color: rgba(0,0,0,0);
+  min-height: 70px;
+  width: 80%;
+  z-index: -1;
+}
+
+.display-only div.DraftEditor-root {
+  z-index: -1;
+}
+
+.inline-editor div.DraftEditor-root {
+  width: min-content;
+  min-width: 250px;
+  min-height: min-content;
+  border: solid 2px rgb(163, 163, 163);
+  background-color: #eee;
+}
+
+.message-editor div.DraftEditor-root {
+  min-height: min-content;
+}

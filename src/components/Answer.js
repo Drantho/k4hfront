@@ -1,11 +1,11 @@
 import { React, useState, useEffect } from 'react';
-import {Link } from "react-router-dom";
+import { Editor, EditorState, convertFromRaw } from 'draft-js';
+
 import { 
     Accordion, 
     AccordionPanel, 
     Box, 
-    Grommet, 
-    Text,
+    Grommet,
     Form,
     FormField,
     TextArea,
@@ -14,19 +14,23 @@ import {
 
 import Rating from './Rating';
 import Comment from './Comment';
+import UserWidget from './UserWidget';
 
 import API from '../utils/API';
 
 export default function Answer(props) {
 
-    
     const theme = {
         global: {
             colors: {
                 focus: undefined
             }
         },
+        formField: {
+            border: undefined
+        },
         accordion: {
+            border: undefined,
             icons: {
                 expand: undefined,
                 collapse: undefined
@@ -36,6 +40,7 @@ export default function Answer(props) {
     
     const [comments, setComments] = useState([]);
     const [newComment, setNewComment] = useState();
+    const [editorState, setEditorState] = useState(EditorState.createEmpty());
 
     useEffect( () => {
         API.getAnswerComments(props.answer.id, props.userState.token)
@@ -44,6 +49,10 @@ export default function Answer(props) {
             }).catch( (err) => {
                 console.log(err);
             });
+
+        setEditorState(
+            EditorState.createWithContent(convertFromRaw(JSON.parse(props.answer.text)))
+        );
     }, []);
 
     const handleCommentInput = (event) => {
@@ -69,11 +78,24 @@ export default function Answer(props) {
         <Accordion>
             <AccordionPanel 
                 label={
-                    <Box fill direction='row' border='bottom'>
-                        <Rating setAnswers={props.setAnswers}
-                            reference={props.answer.id} type='answer'
+                    <Box 
+                        pad='xsmall'
+                        margin={{ vertical: '5px' }} 
+                        fill 
+                        className='answer-display' 
+                        direction='row'
+                        align='center'
+                        round='small'
+                        style={{ boxShadow: 'inset 0 0 4px #222E42' }}
+                    >
+                        <Rating 
+                            setAnswers={props.setAnswers}
+                            reference={props.answer.id} 
+                            type='answer'
+                            owner={props.answer.UserId}
                             userState={props.userState} />
-                        <Text size='16px'>{props.answer.text}<br/><Link to={`/users/${props.answer.User.id}`}>{props.answer.User.username}</Link></Text>
+                        <Editor editorState={editorState} readOnly={true}/>
+                        <UserWidget margin={{ right: '10px' }} userState={props.answer.User} />
                     </Box>
                 }>
                 <Box width='85%' justify='center' alignSelf='center'>
@@ -85,21 +107,17 @@ export default function Answer(props) {
                                     text={e.text} />
                     })}
 
-                    <Accordion margin={{ top: '15px' }} width='85%'>
-                        <AccordionPanel label='Leave a comment...'>
-                            <Box>
-                                <Form onSubmit={handleSubmitComment}
-                                    value={newComment}>
-                                    <FormField htmlFor='text-area'
-                                        onChange={handleCommentInput}
-                                        component={TextArea}
-                                        placeholder='Comment...'
-                                        value={newComment} />
-                                    <Button type='submit' label='Submit' />
-                                </Form>
-                            </Box>
-                        </AccordionPanel>
-                    </Accordion>
+                    <Box margin={{ bottom: 'small' }}>
+                        <Form onSubmit={handleSubmitComment}
+                            value={newComment}>
+                            <FormField htmlFor='text-area'
+                                onChange={handleCommentInput}
+                                component={TextArea}
+                                placeholder='Leave a comment on this answer...'
+                                value={newComment} />
+                            <Button type='submit' label='Submit' />
+                        </Form>
+                    </Box>
                 </Box>
             </AccordionPanel>
         </Accordion>

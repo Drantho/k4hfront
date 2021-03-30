@@ -24,7 +24,7 @@ export default function Tag(props) {
             const data = response.data;
             console.log(data);
             data.Services.forEach( e => e.type = 'service');
-            data.Questions.forEach( e => e.type = 'question');
+            data.Questions.forEach( e => e.type = "question");
             
             const entities = response.data.Questions.concat(response.data.Services);
             setEntitiesList(entities);

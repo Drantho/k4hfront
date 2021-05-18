@@ -8,8 +8,7 @@ import UserServices from '../components/UserServices'
 import UserTags from '../components/UserTags'
 import Tags from '../components/Tags'
 import BioBox from '../components/BioBox';
-import MediaQuery from 'react-responsive';
-import AddServiceForm from '../components/AddServiceForm';
+import MediaQuery from 'react-responsive'
 
 export default function Profile(props) {
     const history = useHistory();

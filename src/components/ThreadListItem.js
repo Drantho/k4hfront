@@ -1,6 +1,6 @@
-import React from 'react';
+import { React } from 'react';
 
-import { Box, Text } from 'grommet';
+import {Box, Button, Text} from 'grommet';
 
 export default function ThreadListItem(props) {
 
@@ -14,8 +14,7 @@ export default function ThreadListItem(props) {
             onClick={caller}
             background={props.active ? '#FCE181' : '#222E42'}
             hoverIndicator={{ color: '#FCE181'}}
-            focusIndicator={true}
-        >
+            focusIndicator={true}>
             <Text>{props.toUser.firstName}</Text>
         </Box>
     )

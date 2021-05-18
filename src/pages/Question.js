@@ -1,13 +1,10 @@
 import { React, useEffect, useState } from 'react'
-import { useParams, Link, useHistory } from 'react-router-dom';
-
-import { Editor, EditorState, ContentState, convertFromRaw } from 'draft-js';
+import { useParams, Link } from 'react-router-dom';
 
 import Comment from '../components/Comment';
 import Rating from '../components/Rating';
 import Answer from '../components/Answer';
-import PostEditor from '../components/PostEditor';
-import Navbar from '../components/Navbar';
+import Tag from '../components/Tag';
 
 import {
     Box,
@@ -15,21 +12,20 @@ import {
     Heading,
     Accordion,
     AccordionPanel,
+    Anchor,
+    Avatar,
+    Grid,
     Text,
     TextArea,
     Form,
     FormField,
-    Grommet,
-    Anchor
+    Grommet
 } from 'grommet';
 
 import API from '../utils/API';
-import UserWidget from '../components/UserWidget';
-import TagDisplay from '../components/TagDisplay';
 
 export default function Question(props) {
     const { id } = useParams();
-    const history = useHistory();
 
     const emptyQuestionComment = {
         text: "",
@@ -55,21 +51,28 @@ export default function Question(props) {
 
     const [answers, setAnswers] = useState([]);
 
-    const [editorState, setEditorState] = useState(EditorState.createEmpty())
+    const [tags, setTags] = useState([]);
+
+    const [ratings, setRatings] = useState({});
 
     const handleSubmit = async () => {
+
         if (answer) {
+
             await API.createAnswer(answer, props.userState.token).catch(err => console.log(err));
 
-            setEditorState(EditorState.push(editorState, ContentState.createFromText('')));
+            setAnswer({ ...answer, text: "" });
 
             const newAnswers = await API.getAnswersByQuestion(id).catch(err => console.log(err));
             setAnswers(newAnswers.data);
+
         }
     }
 
     const handleAddQuestionComment = async (event) => {
+
         if (questionComment) {
+
             await API.createQuestionComment(questionComment, props.userState.token)
                 .catch(err => console.log(err));
 
@@ -78,20 +81,21 @@ export default function Question(props) {
 
             setQuestionComment(emptyQuestionComment);
         }
+
     }
 
     useEffect(async () => {
         const questionToShow = await API.getQuestionById(id).catch(err => console.log(err));
         setQuestion(questionToShow.data);
-        setEditorState(
-            EditorState.createWithContent(convertFromRaw(JSON.parse(questionToShow.data.text)))
-        );
 
         const commentsToShow = await API.getAllQuestionComments(id).catch(err => console.log(err));;
         setQuestionComments(commentsToShow.data);
 
         const answerToShow = await API.getAnswersByQuestion(id).catch(err => console.log(err));;
         setAnswers(answerToShow.data);
+
+        const ratingToShow = await API.getRating(id, "question").catch(err => console.log(err));;
+        setRatings(ratingToShow.data);
 
     }, []);
 
@@ -122,83 +126,86 @@ export default function Question(props) {
 
     }
 
+    const descriptionBoxTheme = {
+        box: {
+            extend: `
+                background-color: #FFFFFF;
+                border: 2px solid #FCE181;
+                border-radius: 10px;`
+        }
+    }
+
     const handleCommentInput = (event) => {
         setQuestionComment({ ...questionComment, text: event.target.value });
     }
 
-    const blockStyleFn = (contentBlock) => {
-        if (contentBlock.getType() === 'code-block') {
-            return 'codeBlockStyle';
-        }
+    const handleAnswerInput = (event) => {
+        setAnswer({ ...answer, text: event.target.value })
     }
 
     return (
         <Grommet theme={theme}>
-            <Navbar userState={props.userState}/>
-            <Box margin={{ bottom: '20px' }} align='center'>
-                <Box margin={{ top: 79 + 15 + 'px' }} width='80%'>
-                    { history.length > 0 &&  
-                        <Anchor onClick={() => history.goBack()}>
-                            &lt; Back
-                        </Anchor> }
-                    <Box height='3px' margin={{top: '5px'}} background='#222E42' />
+            <Box margin={{ top: '100px', bottom: '20px' }} align='center'>
+                <Box width='80%'>
+
+                    <Box height='3px' background='#222E42' />
 
                     <Box justify='between' align='center' direction='row'>
                         <Box align='center' direction='row'>
-                            <Rating 
-                                setAnswers={setAnswers} 
-                                userState={props.userState} 
-                                type='question' 
-                                owner={question.User.id} 
-                                reference={id}
-                            />
+                            <Rating setAnswers={setAnswers} userState={props.userState} type='question' owner={question.User.id} reference={id} />
                             <Box pad={{ bottom: '10px' }}>
-                                <Heading fill 
-                                    margin={{ vertical: '5px' }} 
-                                    level={2}
-                                >
-                                    {question.title}
-                                </Heading>
-                                <TagDisplay tags={question.Tags} userState={props.userState} />
+                                <Heading fill margin={{ top: '10px' }} level={2}>{question.title}</Heading>
+                                <Box direction='row'>
+                                    {question.Tags.map(e => <Tag tag={e} userState={props.userState} />)}
+                                </Box>
                             </Box>
                         </Box>
 
-                        <UserWidget margin={{right: '15px'}} userState={question.User} />
+                        <Box fill width={{ max: '180px', min: '180px' }}
+                            background='#FFFFFF'
+                            border={{
+                                color: '#d6bf6b'
+                            }}
+                            round='small'
+                            align='center'
+                            direction='row'>
+                            <Box margin={{ left: '20px' }} align='end'>
+                                <Text size='small'>{question.User.userName}</Text>                                
+                            </Box>
+                            <Link to={`/users/${question.User.id}`}>
+                                <Avatar
+                                    margin='small'
+                                    size='40px'
+                                    src={`https://res.cloudinary.com/drantho/image/upload/c_fill,w_125/${question.User.portrait}.png`} />
+                            </Link>
+                        </Box>
 
                     </Box>
-
                     <Box height='3px' background='#222E42' />
 
-                    <Box 
-                        pad={{ vertical: '30px', horizontal: '15px' }}
-                        margin={{ horizontal: 'medium', top: '0px' }}
-                        round='small'
-                        className='display-only'
-                    >
-                        <Editor 
-                            editorState={editorState} 
-                            readOnly={true} 
-                            blockStyleFn={blockStyleFn}/>
-                    </Box>
+                    <Grommet theme={descriptionBoxTheme}>
+                        <Box pad={{ vertical: '30px', horizontal: '15px' }}
+                            background='rgba(252,225,129,0.8)'
+                            round='small'
+                            margin={{ horizontal: 'large', top: '20px' }}>
+                            <Text color='#222E42' size='large'>{question.text}</Text>
+                        </Box>
+                    </Grommet>
 
 
-                    <Heading 
-                        margin={{ top: '0px', bottom: 'xsmall' }} 
-                        level={3}
-                    >
-                            Comments
-                    </Heading>
-
+                    <Heading margin={{ top: 'medium', bottom: 'xsmall' }} level={3}>Comments</Heading>
                     <Box height='3px' background='#222E42' />
-
                     <Box align='center'>
-                        { questionComments.map( e => <Comment
-                                                        user={e.User}
-                                                        reference={e.id}
-                                                        date={e.createdAt}
-                                                        text={e.text} /> ) }
+                        {questionComments.map((e) => {
+                            return <Comment
+                                user={e.User}
+                                reference={e.id}
+                                date={e.createdAt}
+                                text={e.text} />
+                        })}
 
-                        { props.userState.isSignedIn &&
+                        {/* {(props.userState.id !== question.User.id && props.userState.isSignedIn) && */}
+                        {(props.userState.isSignedIn) &&
                             <Accordion margin={{ top: '15px' }} width='85%'>
                                 <AccordionPanel label='Leave a comment...'>
                                     <Box>
@@ -213,66 +220,50 @@ export default function Question(props) {
                                         </Form>
                                     </Box>
                                 </AccordionPanel>
-                            </Accordion> }
+                            </Accordion>}
 
-                        { !props.userState.isSignedIn &&
-                            <Box 
-                                pad='small' 
-                                margin={{ top: 'xsmall' }}
-                                align='center' 
-                                round='small' 
-                                fill 
-                                background='rgba(0,0,0,0.2)'
-                            >
+                        {!props.userState.isSignedIn &&
+                            <Box pad='small' margin={{ top: 'xsmall' }}
+                                align='center' round='small' fill background='rgba(0,0,0,0.2)'>
                                 <Link to='/splash'>
-                                    <Text pad='small'>
-                                        Sign In or Sign Up to leave a comment!
-                                    </Text>
+                                    <Text pad='small'>Sign In or Sign Up to leave a comment!</Text>
                                 </Link>
                             </Box>
                         }
                     </Box>
 
-                    <Heading 
-                        margin={{ top: 'medium', bottom: 'xsmall' }} 
-                        level={3}
-                    >
-                        Answers
-                    </Heading>
-
+                    <Heading margin={{ top: 'medium', bottom: 'xsmall' }} level={3}>Answers</Heading>
                     <Box height='3px' background='#222E42' />
-
-                    <Box margin={{ vertical: '10px' }}>
-                        { answers.map( e =>  <Answer
-                                                setAnswers={setAnswers}
-                                                userState={props.userState}
-                                                answer={e} /> ) }
+                    <Box margin={{ top: '10px' }}>
+                        {
+                            answers.map((e) => {
+                                return <Answer
+                                    setRatings={setRatings}
+                                    setAnswers={setAnswers}
+                                    userState={props.userState}
+                                    answer={e} />
+                            })
+                        }
                     </Box>
 
-                    { props.userState.isSignedIn &&
-                        <Box fill>
-                            <Heading
-                                level={3}
-                                margin={{ top: 'medium', bottom: 'xsmall' }}
-                            >
-                                Submit an answer
-                            </Heading>
+                    {/* {(props.userState.id !== question.User.id && props.userState.isSignedIn) && */}
+                    {(props.userState.isSignedIn) &&
+                        <Box>
 
-                            <Box height='3px' background='#222E42' margin={{ bottom: 'small' }} />
+                            <Heading margin={{ top: 'medium', bottom: 'xsmall' }} level={3}>Submit an answer</Heading>
+                            <Box height='3px' background='#222E42' />
+                            <Form onSubmit={handleSubmit} value={answer.text}>
+                                <FormField htmlFor='text-area'
+                                    onChange={handleAnswerInput}
+                                    component={TextArea}
+                                    placeholder='Answer...'
+                                    value={answer.text} />
+                                <Button type='submit' label='Submit' />
+                            </Form>
 
-                            <PostEditor
-                                getDraftValue={
-                                    (value) => setAnswer({ ...answer, text: JSON.stringify(value) })
-                                }
-                                controlledContent={answer.text} />
+                        </Box>}
 
-                            <Box height='10px' />
-
-                            <Button label='Submit' onClick={handleSubmit} />
-                        </Box>
-                    }
-
-                    { !props.userState.isSignedIn &&
+                    {!props.userState.isSignedIn &&
                         <Box pad='small' margin={{ top: 'xsmall' }}
                             align='center' round='small' fill background='rgba(0,0,0,0.2)'>
                             <Link to='/splash'>

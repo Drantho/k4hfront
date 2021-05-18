@@ -13,7 +13,6 @@ import MediaQuery from 'react-responsive'
 import MobileSearchBar from '../components/MobileSearchBar'
 import MobileHomeBar from '../components/MobileHomeBar';
 import MobileNavbar from '../components/MobileNavbar'
-import Navbar from '../components/Navbar';
 
 export default function UserHome(props) {
 
@@ -177,7 +176,6 @@ export default function UserHome(props) {
     return (
         <Grommet theme={globalGrommetTheme}>
             <MediaQuery minDeviceWidth={1000}>
-                <Navbar userState={props.userState} />
                 <Box margin={{ top: "75px" }}>
                     <Grid
                         areas={[

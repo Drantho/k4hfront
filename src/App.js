@@ -3,14 +3,14 @@ import { Grommet } from 'grommet';
 import { BrowserRouter as Router, Redirect, Route, Switch } from 'react-router-dom';
 import Home from "./pages/Home";
 import Tag from "./pages/Tag";
-import Profile from "./pages/ProfilePage";
+import Profile from "./pages/Profile";
 import Question from "./pages/Question";
 import User from "./pages/User";
 import UserHome from './pages/UserHome';
 import Ask from './pages/Ask';
 import Signin from './pages/Signin';
 import Signup from './pages/Signup';
-import Navbar from './components/Navbar';
+import NavbarTest from './components/Navbar';
 import Browse from './pages/Browse';
 import NotFound from './pages/NotFound';
 import Service from './pages/Service';
@@ -139,31 +139,23 @@ function App() {
   return (
     <Router>
       <Grommet theme={globalGrommetTheme}>
-
-
+      <UserNavbar userState={userState}/>
+      {/* <LoginNavbar/> */}
       <Switch>
-
         <Route exact path="/">
-          <Home userState={ userState.isSignedIn ? userState : {} } />
+          {userState.isSignedIn ?
+            <Redirect to='/home' /> : <Splash setUserState={setUserState} />}
         </Route>
-        <Route exact path="/home">
-          <Home userState={ userState.isSignedIn ? userState : {} } />
-        </Route>
-
         <Route exact path="/splash">
           {userState.isSignedIn ? 
             <Redirect to='/home' /> : <Splash setUserState={setUserState} />}
         </Route>
-        <Route exact path='/splash/:tab'>
-            {userState.isSignedIn ?
-              <Redirect to='/home' /> : <Splash setUserState={setUserState} />}
-        </Route>
         <Route exact path="/browse">
           <Browse userState={userState}/>
         </Route>
-        <Route exact path="/profile/:id">
+        <ProtectedRoute exact path="/profile" isSignedIn={userState.isSignedIn}>
           <Profile userState={userState} setUserState={setUserState}/>
-        </Route>
+        </ProtectedRoute>
         <Route exact path="/tag/:id">
           <Tag userState={userState}/>
         </Route>
@@ -173,8 +165,11 @@ function App() {
         <Route exact path="/users/:id">
           <User />
         </Route>
+        <ProtectedRoute exact path="/home" isSignedIn={userState.isSignedIn}>
+          <UserHome userState={userState}/>
+        </ProtectedRoute>
         <ProtectedRoute exact path="/ask" isSignedIn={userState.isSignedIn}>
-          <Ask pad={{ horizontal: '10%' }} showBackButton showNav userState={userState}/>
+          <Ask userState={userState}/>
         </ProtectedRoute>
         <Route path="/service/:id">
           <Service userState={userState}/>
@@ -198,16 +193,9 @@ function App() {
             setUserState={setUserState} 
           />
         </Route>
-        <Route exact path='/messages/:threadId'>
+        <ProtectedRoute exact path="/messages" isSignedIn={userState.isSignedIn}>
           <MessageView userState={userState} />
-        </Route> 
-        <Route exact path='/messages'>
-          <MessageView userState={userState} />
-        </Route> 
-
-        {/* <ProtectedRoute exact path="/messages/:threadId" isSignedIn={userState.isSignedIn}>
-          <MessageView userState={userState} />
-        </ProtectedRoute> */}
+        </ProtectedRoute>
         <Route path="*">
           <NotFound />
         </Route>
